@@ -6,7 +6,7 @@ See https://github.com/SheffieldSolar/PV_Forecast-API for installation instructi
 - First Authored: 2018-08-31
 """
 
-from datetime import datetime, date
+from datetime import datetime
 import pytz
 import time as TIME
 
