@@ -40,7 +40,7 @@ class PVForecast:
 
     Notes
     -----
-    To obtain a User ID and API key, please visit <https://api.solar.sheffield.ac.uk/pvforecast/>`_.
+    To obtain a User ID and API key, please visit <https://api.solar.sheffield.ac.uk/pvforecast/>.
     """
     def __init__(self, user_id, api_key, retries=3):
         if not user_id or not api_key:
