@@ -113,8 +113,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        `forecast_base_gmt` : datetime</span>
-<span class="sd">            A timezone-aware datetime object. Will be corrected to the END of the half hour in which</span>
-<span class="sd">            *dt* falls, since Sheffield Solar use end of interval as convention.</span>
+<span class="sd">            A timezone-aware datetime object.</span>
 <span class="sd">        `region_id` : int</span>
 <span class="sd">            The numerical ID of the region of interest. Defaults to 0 (i.e. national).</span>
 
@@ -127,7 +126,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">forecast_base_gmt</span><span class="p">,</span> <span class="n">datetime</span><span class="p">)</span> <span class="ow">or</span> <span class="n">forecast_base_gmt</span><span class="o">.</span><span class="n">tzinfo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">PVForecastException</span><span class="p">(</span><span class="s2">&quot;The forecast_base_gmt must be a timezone-aware Python datetime &quot;</span>
-                            <span class="s2">&quot;object.&quot;</span><span class="p">)</span>
+                                <span class="s2">&quot;object.&quot;</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compile_params</span><span class="p">(</span><span class="n">region_id</span><span class="p">,</span> <span class="n">forecast_base_gmt</span><span class="p">)</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_api</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
@@ -166,18 +165,6 @@
                 <span class="n">data</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_forecast</span><span class="p">(</span><span class="n">forecast_base_gmt</span><span class="o">=</span><span class="n">forecast_base</span><span class="p">,</span> <span class="n">region_id</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">forecast_base</span> <span class="o">+=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span></div>
-
-    <span class="k">def</span> <span class="nf">_parse_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Parse the CSV data returned by the API.&quot;&quot;&quot;</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">parse_dt</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">ds</span><span class="p">:</span> <span class="n">pytz</span><span class="o">.</span><span class="n">utc</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">parse_dt</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">parse_dt</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
-                         <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">5</span><span class="p">])])</span>
-        <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span> <span class="nf">_compile_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">region_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">forecast_base_gmt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Compile parameters into a Python dict, formatting where necessary.&quot;&quot;&quot;</span>
@@ -224,12 +211,26 @@
         <span class="k">except</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">PVForecastException</span><span class="p">(</span><span class="s2">&quot;Error communicating with the PV_Forecast API.&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_nearest_fbase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_parse_response</span><span class="p">(</span><span class="n">response</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse the CSV data returned by the API.&quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">parse_dt</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">ds</span><span class="p">:</span> <span class="n">pytz</span><span class="o">.</span><span class="n">utc</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">parse_dt</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">parse_dt</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+                         <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">5</span><span class="p">])])</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_nearest_fbase</span><span class="p">(</span><span class="n">dtime</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Round a given datetime object up to the nearest forecast base time.&quot;&quot;&quot;</span>
-        <span class="n">target_hour</span> <span class="o">=</span> <span class="n">ceil</span><span class="p">((</span><span class="n">dt</span><span class="o">.</span><span class="n">hour</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="n">dt</span> <span class="o">-=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">minute</span><span class="p">,</span> <span class="n">seconds</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
-        <span class="n">dt</span> <span class="o">+=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">target_hour</span> <span class="o">-</span> <span class="n">dt</span><span class="o">.</span><span class="n">hour</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">dt</span></div>
+        <span class="n">target_hour</span> <span class="o">=</span> <span class="n">ceil</span><span class="p">((</span><span class="n">dtime</span><span class="o">.</span><span class="n">hour</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">dtime</span> <span class="o">-=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">dtime</span><span class="o">.</span><span class="n">minute</span><span class="p">,</span> <span class="n">seconds</span><span class="o">=</span><span class="n">dtime</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+        <span class="n">dtime</span> <span class="o">+=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">target_hour</span> <span class="o">-</span> <span class="n">dtime</span><span class="o">.</span><span class="n">hour</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dtime</span></div>
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../modules.html#pvforecast_api.pvforecast.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Demo the module&#39;s capabilities.&quot;&quot;&quot;</span>

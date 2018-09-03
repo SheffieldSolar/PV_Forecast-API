@@ -74,8 +74,7 @@ class PVForecast:
         Parameters
         ----------
         `forecast_base_gmt` : datetime
-            A timezone-aware datetime object. Will be corrected to the END of the half hour in which
-            *dt* falls, since Sheffield Solar use end of interval as convention.
+            A timezone-aware datetime object.
         `region_id` : int
             The numerical ID of the region of interest. Defaults to 0 (i.e. national).
 
@@ -88,7 +87,7 @@ class PVForecast:
         """
         if not isinstance(forecast_base_gmt, datetime) or forecast_base_gmt.tzinfo is None:
             PVForecastException("The forecast_base_gmt must be a timezone-aware Python datetime "
-                            "object.")
+                                "object.")
         params = self._compile_params(region_id, forecast_base_gmt)
         response = self._query_api(params)
         return self._parse_response(response)
@@ -126,18 +125,6 @@ class PVForecast:
             if not forecast_base_times or forecast_base.strftime("%H:%M") in forecast_base_times:
                 data += self.get_forecast(forecast_base_gmt=forecast_base, region_id=0)
             forecast_base += timedelta(hours=3)
-        return data
-
-    def _parse_response(self, response):
-        """Parse the CSV data returned by the API."""
-        data = []
-        parse_dt = lambda ds: pytz.utc.localize(datetime.strptime(ds, "%Y-%m-%d %H:%M:%S"))
-        for line in response.split("\r\n")[1:]:
-            if not line:
-                continue
-            row = line.strip().split(",")
-            data.append([int(row[0]), parse_dt(row[1]), parse_dt(row[2]), float(row[3]),
-                         float(row[4]), float(row[5])])
         return data
 
     def _compile_params(self, region_id=0, forecast_base_gmt=None):
@@ -185,12 +172,26 @@ class PVForecast:
         except:
             raise PVForecastException("Error communicating with the PV_Forecast API.")
 
-    def _nearest_fbase(self, dt):
+    @staticmethod
+    def _parse_response(response):
+        """Parse the CSV data returned by the API."""
+        data = []
+        parse_dt = lambda ds: pytz.utc.localize(datetime.strptime(ds, "%Y-%m-%d %H:%M:%S"))
+        for line in response.split("\r\n")[1:]:
+            if not line:
+                continue
+            row = line.strip().split(",")
+            data.append([int(row[0]), parse_dt(row[1]), parse_dt(row[2]), float(row[3]),
+                         float(row[4]), float(row[5])])
+        return data
+
+    @staticmethod
+    def _nearest_fbase(dtime):
         """Round a given datetime object up to the nearest forecast base time."""
-        target_hour = ceil((dt.hour - 1) / 3.) * 3 + 1
-        dt -= timedelta(minutes=dt.minute, seconds=dt.second)
-        dt += timedelta(hours=target_hour - dt.hour)
-        return dt
+        target_hour = ceil((dtime.hour - 1) / 3.) * 3 + 1
+        dtime -= timedelta(minutes=dtime.minute, seconds=dtime.second)
+        dtime += timedelta(hours=target_hour - dtime.hour)
+        return dtime
 
 def main():
     """Demo the module's capabilities."""
