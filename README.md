@@ -12,6 +12,7 @@ A Python implementation of the PV_Forecast web API. See [www.solar.sheffield.ac.
 * Make sure you have Git installed - [Download Git](https://git-scm.com/downloads)
 * Run `pip install git+https://github.com/SheffieldSolar/PV_Forecast-API`
     - NOTE: You may need to run this command as sudo on Linux machines depending, on your Python installation i.e. `sudo pip install git+https://github.com/SheffieldSolar/PV_Forecast-API`
+* You will need a _User ID_ and _API Key_ for Sheffield Solar's PV_Forecast service - log in to the [PV_Forecast API website](https://api.solar.sheffield.ac.uk/pvforecast/) and go to the [User Area](https://api.solar.sheffield.ac.uk/pvforecast/user) to find yours.
 
 ## Getting started ##
 
@@ -19,7 +20,7 @@ See [pvforecast_api_demo.py](https://github.com/SheffieldSolar/PV_Forecast-API/b
 ```Python
 from pvforecast_api import PVForecast
 
-pvf = PVForecast()
+pvf = PVForecast(user_id="<your-user-id>", api_key="<your-api-key>")
 pvf.latest()
 ```
 
