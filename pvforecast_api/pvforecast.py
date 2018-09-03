@@ -27,12 +27,20 @@ class PVForecastException(Exception):
 class PVForecast:
     """
     Interface with the PV_Forecast web API.
-    
+
     Parameters
     ----------
+    `user_id` : string
+        A valid User ID for the PV_Forecast API.
+    `api_key` : string
+        A valid API Key for the PV_Forecast API (must correspond to the given *user_id*).
     `retries` : int
         Optionally specify the number of retries to use should the API respond with anything
         other than status code 200. Exponential back-off applies inbetween retries.
+
+    Notes
+    -----
+    To obtain a User ID and API key, please visit <https://api.solar.sheffield.ac.uk/pvforecast/>`_.
     """
     def __init__(self, user_id, api_key, retries=3):
         if not user_id or not api_key:
@@ -49,6 +57,7 @@ class PVForecast:
         ----------
         `region_id` : int
             The numerical ID of the region of interest. Defaults to 0 (i.e. national).
+
         Returns
         -------
         list
@@ -69,8 +78,7 @@ class PVForecast:
             *dt* falls, since Sheffield Solar use end of interval as convention.
         `region_id` : int
             The numerical ID of the region of interest. Defaults to 0 (i.e. national).
-        Returns
-        -------
+
         Returns
         -------
         list
@@ -100,6 +108,7 @@ class PVForecast:
             The default behaviour (an empty list) is to download all forecast bas times.
         `region_id` : int
             The numerical ID of the region of interest. Defaults to 0 (i.e. national).
+
         Returns
         -------
         list
