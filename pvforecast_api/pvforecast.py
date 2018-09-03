@@ -177,7 +177,7 @@ class PVForecast:
         """Parse the CSV data returned by the API."""
         data = []
         parse_dt = lambda ds: pytz.utc.localize(datetime.strptime(ds, "%Y-%m-%d %H:%M:%S"))
-        for line in response.split("\r\n")[1:]:
+        for line in response.splitlines()[1:]:
             if not line:
                 continue
             row = line.strip().split(",")
