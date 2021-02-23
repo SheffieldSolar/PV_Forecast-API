@@ -46,7 +46,7 @@ The examples below assume you have imported the PVForecast class and created a l
 from datetime import datetime
 import pytz
 
-from pvorecast_api import PVForecast
+from pvforecast_api import PVForecast
 
 pvf = PVForecast(user_id="", api_key="") # Enter your user_id and api_key here!
 ```
