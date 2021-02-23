@@ -2,7 +2,7 @@
 # PV_Forecast-API
 A Python implementation of the PV_Forecast web API. See [www.solar.sheffield.ac.uk/pvforecast/](https://www.solar.sheffield.ac.uk/pvforecast/) and [api.solar.sheffield.ac.uk](https://api.solar.sheffield.ac.uk/)
 
-**Latest Version: 0.2**
+**Latest Version: 0.3**
 
 **New! Updated 2021-02-23 to use PV_Forecast API v3.**
 
@@ -19,13 +19,13 @@ A Python implementation of the PV_Forecast web API. See [www.solar.sheffield.ac.
 
 ## Usage
 
-There are three methods for extracting raw data from the PV_Live API:
+There are three methods for extracting raw data from the PV_Forecast API:
 
 |Method|Description|Docs Link|
 |------|-----------|---------|
 |`PVForecast.latest(entity_type="pes", entity_id=0, extra_fields="", dataframe=False)`|Get the latest PV forecast from the API.|[&#128279;](https://sheffieldsolar.github.io/PV_Forecast-API/build/html/modules.html#pvforecast_api.pvforecast.PVForecast.latest)|
 |`PVForecast.get_forecast(forecast_base_gmt=None, entity_type="pes", entity_id=0, extra_fields="", dataframe=False)`|Get the PV forecast for a given forecast base from the API.|[&#128279;](https://sheffieldsolar.github.io/PV_Forecast-API/build/html/modules.html#pvforecast_api.pvforecast.PVForecast.get_forecast)|
-|`PVForecast.get_forecasts(start, end, forecast_base_times=[], entity_type="pes", entity_id=0, extra_fields="", dataframe=False)`|Get all PV forecasts during a given time interval from the API. This method is temporarily deprecated but will return in a future version of this code.|[&#128279;](https://sheffieldsolar.github.io/PV_Forecast-API/build/html/modules.html#pvforecast_api.pvforecast.PVForecast.get_forecasts)|
+|`PVForecast.get_forecasts(start, end, forecast_base_times=[], entity_type="pes", entity_id=0, extra_fields="", dataframe=False)`|Get all PV forecasts during a given time interval from the API.|[&#128279;](https://sheffieldsolar.github.io/PV_Forecast-API/build/html/modules.html#pvforecast_api.pvforecast.PVForecast.get_forecasts)|
 
 These methods include the following optional parameters:
 
@@ -57,6 +57,7 @@ pvf = PVForecast(user_id="", api_key="") # Enter your user_id and api_key here!
 |Get the latest aggregated outturn forecast for **PES** region **23** (Yorkshire) as a DataFrame|`pvf.latest(entity_id=23, dataframe=True)`|![Screenshot of output](/misc/code_example_output1.png?raw=true)
 |Get the latest aggregated outturn forecast for **GSP** ID **120** (INDQ1 or "Indian Queens")|`pvf.latest(entity_type="gsp", entity_id=120, dataframe=True)`|![Screenshot of output](/misc/code_example_output2.png?raw=true)
 |Get the nationally aggregated GB PV outturn forecast with forecast base `2021-02-23T07:00:00Z` as a DataFrame|`pvf.get_forecast(datetime(2021, 2, 23, 7, 0, tzinfo=pytz.utc), dataframe=True))`|![Screenshot of output](/misc/code_example_output3.png?raw=true)|
+|Get all 07:00 nationally aggregated GB PV outturn forecasts between `2021-02-23T01:00:00Z` and `2021-02-23T07:00:00Z`, as a DataFrame|`pvf.get_forecasts(datetime(2021, 2, 23, 1, 0, tzinfo=pytz.utc), datetime(2021, 2, 23, 7, 0, tzinfo=pytz.utc), forecast_base_times=["07:00"], dataframe=True))`|![Screenshot of output](/misc/code_example_output4.png?raw=true)|
 
 ## Documentation
 

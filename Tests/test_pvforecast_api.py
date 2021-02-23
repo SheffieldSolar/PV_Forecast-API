@@ -114,7 +114,31 @@ class PVForecastTestCase(unittest.TestCase):
 
     def test_get_forecasts(self):
         """Test the get_forecasts function."""
-        # Temporarily deprecated
+        data = self.api.get_forecasts(start=datetime(2021, 2, 2, 1, 0, tzinfo=pytz.utc),
+                                      end=datetime(2021, 2, 2, 12, 0, tzinfo=pytz.utc),
+                                      entity_type="pes", entity_id=0)
+        self.check_list(data)
+        self.check_pes_list_dtypes(data)
+        data = self.api.get_forecasts(start=datetime(2021, 2, 2, 1, 0, tzinfo=pytz.utc),
+                                      end=datetime(2021, 2, 2, 12, 0, tzinfo=pytz.utc),
+                                      entity_type="pes", entity_id=0, dataframe=True)
+        self.check_df_columns(data)
+        self.check_df_dtypes(data)
+        data = self.api.get_forecasts(start=datetime(2021, 2, 2, 1, 0, tzinfo=pytz.utc),
+                                      end=datetime(2021, 2, 2, 12, 0, tzinfo=pytz.utc),
+                                      entity_type="pes", entity_id=0,
+                                      extra_fields="installedcapacity_mwp", dataframe=True)
+        self.check_df_dtypes(data)
+        data = self.api.get_forecasts(start=datetime(2021, 2, 1, 7, 0, tzinfo=pytz.utc),
+                                      end=datetime(2021, 2, 2, 7, 0, tzinfo=pytz.utc),
+                                      entity_type="gsp", entity_id=26)
+        self.check_list(data)
+        self.check_gsp_list_dtypes(data)
+        data = self.api.get_forecasts(start=datetime(2021, 2, 1, 7, 0, tzinfo=pytz.utc),
+                                      end=datetime(2021, 2, 2, 7, 0, tzinfo=pytz.utc),
+                                      entity_type="gsp", entity_id=26, dataframe=True)
+        self.check_df_columns(data)
+        self.check_df_dtypes(data)
         return
 
     def test_get_forecast(self):

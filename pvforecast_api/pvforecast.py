@@ -76,17 +76,17 @@ class PVForecast:
         `extra_fields` : string
             Comma-separated string listing any extra fields.
         `dataframe` : boolean
-            Set to True to return data as a Python DataFrame. Default is False, i.e. return a list.
+            Set to True to return data as a Pandas DataFrame. Default is False, i.e. return a list.
 
         Returns
         -------
         list
             Each element of the outter list is a list containing the pes_id or gsp_id,
-            forecast_base_GMT, datetime_gmt and generation_mw fields of a PV_Forecast, plus any
+            forecast_base_gmt, datetime_gmt and generation_mw fields of a PV_Forecast, plus any
             extra_fields in the order specified.
         OR
         Pandas DataFrame
-            Contains the columns pes_id or gsp_id, forecast_base_GMT, datetime_gmt and
+            Contains the columns pes_id or gsp_id, forecast_base_gmt, datetime_gmt and
             generation_mw, plus any extra_fields in the order specified.
 
         Notes
@@ -113,17 +113,17 @@ class PVForecast:
         `extra_fields` : string
             Comma-separated string listing any extra fields.
         `dataframe` : boolean
-            Set to True to return data as a Python DataFrame. Default is False, i.e. return a list.
+            Set to True to return data as a Pandas DataFrame. Default is False, i.e. return a list.
 
         Returns
         -------
         list
             Each element of the outter list is a list containing the pes_id or gsp_id,
-            forecast_base_GMT, datetime_gmt and generation_mw fields of a PV_Forecast, plus any
+            forecast_base_gmt, datetime_gmt and generation_mw fields of a PV_Forecast, plus any
             extra_fields in the order specified.
         OR
         Pandas DataFrame
-            Contains the columns pes_id or gsp_id, forecast_base_GMT, datetime_gmt and
+            Contains the columns pes_id or gsp_id, forecast_base_gmt, datetime_gmt and
             generation_mw, plus any extra_fields in the order specified.
 
         Notes
@@ -148,12 +148,34 @@ class PVForecast:
             return self._convert_tuple_to_df(response["data"], response["meta"]), response["meta"]
         return response["data"], response["meta"]
 
+    def get_forecast_bases(self, start, end, forecast_type="national"):
+        """
+        Get a list of the forecast base times available on the API between two datetimes.
+
+        Parameters
+        ----------
+        `start` : datetime
+            A timezone-aware datetime object.
+        `end` : datetime
+            A timezone-aware datetime object.
+        `forecast_type` : str
+            Either 'national' or 'regional'.
+        """
+        self._validate_start_end(start, end)
+        if forecast_type.lower() == "national":
+            ggd_id = 0
+        elif forecast_type.lower() == "regional":
+            ggd_id = 1
+        else:
+            raise PVForecastException("forecast_type must be 'national' or 'regional'.")
+        params = {"start": self._iso8601_ss(start), "end": self._iso8601_ss(end)}
+        response = self._query_api("forecast_bases_list", ggd_id, params)
+        return response
+
     def get_forecasts(self, start, end, forecast_base_times=[], entity_type="pes", entity_id=0,
                       extra_fields="", dataframe=False):
         """
         Get multiple PV_Forecasts during a given time interval from the API.
-        
-        CURRENTLY DEPRECATED! Will return in a future versoin of this code.
 
         Parameters
         ----------
@@ -171,17 +193,17 @@ class PVForecast:
         `extra_fields` : string
             Comma-separated string listing any extra fields.
         `dataframe` : boolean
-            Set to True to return data as a Python DataFrame. Default is False, i.e. return a list.
+            Set to True to return data as a Pandas DataFrame. Default is False, i.e. return a list.
 
         Returns
         -------
         list
             Each element of the outter list is a list containing the pes_id or gsp_id,
-            forecast_base_GMT, datetime_gmt and generation_mw fields of a PV_Forecast, plus any
+            forecast_base_gmt, datetime_gmt and generation_mw fields of a PV_Forecast, plus any
             extra_fields in the order specified.
         OR
         Pandas DataFrame
-            Contains the columns pes_id or gsp_id, forecast_base_GMT, datetime_gmt and
+            Contains the columns pes_id or gsp_id, forecast_base_gmt, datetime_gmt and
             generation_mw, plus any extra_fields in the order specified.
 
         Notes
@@ -189,28 +211,42 @@ class PVForecast:
         For list of optional *extra_fields*, see `PV_Forecast API Docs
         <https://api.solar.sheffield.ac.uk/pvforecast/v3/docs>`_.
         """
-        type_check = not (isinstance(start, datetime) and isinstance(end, datetime))
-        tz_check = start.tzinfo is None or end.tzinfo is None
-        if type_check or tz_check:
-            PVForecastException("Start and end must be timezone-aware Python datetime objects.")
-        raise NotImplementedError("The get_forecasts() method is temporarily deprecated.")
+        self._validate_start_end(start, end)
+        self._validate_inputs(entity_type=entity_type, entity_id=entity_id,
+                              extra_fields=extra_fields)
+        try:
+            dummy = [datetime.strptime(t, "%H:%M") for t in forecast_base_times]
+        except ValueError:
+            raise PVForecastException("forecast_base_times must be a list of time strings in the "
+                                      "format HH:MM.")
+        forecast_type = "national" if entity_id == 0 else "regional"
+        fbases = self.get_forecast_bases(start, end, forecast_type)
+        fbases = [datetime.fromisoformat(fb.replace("Z", "+00:00")) for fb in fbases]
         data = []
-        forecast_base = self._nearest_fbase(start)
-        while forecast_base <= end:
-            if not forecast_base_times or forecast_base.strftime("%H:%M") in forecast_base_times:
-                data += self.get_forecast(forecast_base_gmt=forecast_base, region_id=0)
-            forecast_base += timedelta(hours=3)
+        meta = []
+        for fbase in fbases:
+            if not forecast_base_times or fbase.strftime("%H:%M") in forecast_base_times:
+                data_, meta_= self._get_forecast(forecast_base_gmt=fbase, entity_type=entity_type,
+                                                entity_id=entity_id, extra_fields=extra_fields)
+                if data_:
+                    data += data_
+                    meta = meta_
+        if dataframe:
+            return self._convert_tuple_to_df(data, meta)
         return data
 
     def _compile_params(self, forecast_base_gmt, extra_fields):
         """Compile parameters into a Python dict, formatting where necessary."""
         params = {}
         if forecast_base_gmt is not None:
-            params["forecast_base_GMT"] = forecast_base_gmt.isoformat().replace("+00:00", "Z")
+            params["forecast_base_GMT"] = self._iso8601_ss(forecast_base_gmt)
         if extra_fields:
             params["extra_fields"] = extra_fields
         params.update(self.params)
         return params
+
+    def _iso8601_ss(self, dt):
+        return dt.isoformat().replace("+00:00", "Z")
 
     def _query_api(self, entity_type, entity_id, params):
         """Query the API with some REST parameters."""
@@ -251,6 +287,15 @@ class PVForecast:
         except:
             raise PVForecastException("Error communicating with the PV_Forecast API.")
 
+    def _validate_start_end(self, start, end):
+        type_check = not (isinstance(start, datetime) and isinstance(end, datetime))
+        tz_check = start.tzinfo is None or end.tzinfo is None
+        if type_check or tz_check:
+            raise PVForecastException("start and end must be timezone-aware Python datetime "
+                                      "objects.")
+        if end < start:
+            raise PVForecastException("end must be later than start.")
+
     def _validate_inputs(self, forecast_base_gmt=None, entity_type="pes", entity_id=0,
                          extra_fields=""):
         """Validate common input parameters."""
@@ -284,7 +329,7 @@ class PVForecast:
         return data
 
 def main():
-    """Demo the module's capabilities."""
+    """Placeholder for CLI to be added in future release."""
     print("There is no CLI for this module yet.")
     sys.exit()
 

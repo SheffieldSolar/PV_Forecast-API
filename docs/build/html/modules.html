@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Modules &#8212; PV_Forecast-API 0.2 documentation</title>
+    <title>Modules &#8212; PV_Forecast-API 0.3 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     
@@ -30,7 +30,7 @@
         <li class="right" >
           <a href="index.html" title="Welcome to PV_Forecast-API’s documentation!"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">PV_Forecast-API 0.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">PV_Forecast-API 0.3 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Modules</a></li> 
       </ul>
     </div>  
@@ -89,10 +89,13 @@ other than status code 200. Exponential back-off applies inbetween retries.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pvforecast_api.pvforecast.PVForecast.get_forecast" title="pvforecast_api.pvforecast.PVForecast.get_forecast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_forecast</span></code></a>([forecast_base_gmt, …])</p></td>
 <td><p>Get the PV_Forecast with a given forecast base from the API.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pvforecast_api.pvforecast.PVForecast.get_forecasts" title="pvforecast_api.pvforecast.PVForecast.get_forecasts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_forecasts</span></code></a>(start, end[, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pvforecast_api.pvforecast.PVForecast.get_forecast_bases" title="pvforecast_api.pvforecast.PVForecast.get_forecast_bases"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_forecast_bases</span></code></a>(start, end[, forecast_type])</p></td>
+<td><p>Get a list of the forecast base times available on the API between two datetimes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pvforecast_api.pvforecast.PVForecast.get_forecasts" title="pvforecast_api.pvforecast.PVForecast.get_forecasts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_forecasts</span></code></a>(start, end[, …])</p></td>
 <td><p>Get multiple PV_Forecasts during a given time interval from the API.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pvforecast_api.pvforecast.PVForecast.latest" title="pvforecast_api.pvforecast.PVForecast.latest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">latest</span></code></a>([entity_type, entity_id, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pvforecast_api.pvforecast.PVForecast.latest" title="pvforecast_api.pvforecast.PVForecast.latest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">latest</span></code></a>([entity_type, entity_id, …])</p></td>
 <td><p>Get the latest PV_Forecast from the API.</p></td>
 </tr>
 </tbody>
@@ -112,18 +115,18 @@ other than status code 200. Exponential back-off applies inbetween retries.</p>
 </dd>
 <dt><strong>`extra_fields`</strong><span class="classifier">string</span></dt><dd><p>Comma-separated string listing any extra fields.</p>
 </dd>
-<dt><strong>`dataframe`</strong><span class="classifier">boolean</span></dt><dd><p>Set to True to return data as a Python DataFrame. Default is False, i.e. return a list.</p>
+<dt><strong>`dataframe`</strong><span class="classifier">boolean</span></dt><dd><p>Set to True to return data as a Pandas DataFrame. Default is False, i.e. return a list.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
 <dt>list</dt><dd><p>Each element of the outter list is a list containing the pes_id or gsp_id,
-forecast_base_GMT, datetime_gmt and generation_mw fields of a PV_Forecast, plus any
+forecast_base_gmt, datetime_gmt and generation_mw fields of a PV_Forecast, plus any
 extra_fields in the order specified.</p>
 </dd>
 <dt>OR</dt><dd></dd>
-<dt>Pandas DataFrame</dt><dd><p>Contains the columns pes_id or gsp_id, forecast_base_GMT, datetime_gmt and
+<dt>Pandas DataFrame</dt><dd><p>Contains the columns pes_id or gsp_id, forecast_base_gmt, datetime_gmt and
 generation_mw, plus any extra_fields in the order specified.</p>
 </dd>
 </dl>
@@ -134,10 +137,27 @@ generation_mw, plus any extra_fields in the order specified.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="pvforecast_api.pvforecast.PVForecast.get_forecast_bases">
+<code class="sig-name descname"><span class="pre">get_forecast_bases</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecast_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'national'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pvforecast_api/pvforecast.html#PVForecast.get_forecast_bases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pvforecast_api.pvforecast.PVForecast.get_forecast_bases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of the forecast base times available on the API between two datetimes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>`start`</strong><span class="classifier">datetime</span></dt><dd><p>A timezone-aware datetime object.</p>
+</dd>
+<dt><strong>`end`</strong><span class="classifier">datetime</span></dt><dd><p>A timezone-aware datetime object.</p>
+</dd>
+<dt><strong>`forecast_type`</strong><span class="classifier">str</span></dt><dd><p>Either ‘national’ or ‘regional’.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pvforecast_api.pvforecast.PVForecast.get_forecasts">
 <code class="sig-name descname"><span class="pre">get_forecasts</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecast_base_times</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataframe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pvforecast_api/pvforecast.html#PVForecast.get_forecasts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pvforecast_api.pvforecast.PVForecast.get_forecasts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get multiple PV_Forecasts during a given time interval from the API.</p>
-<p>CURRENTLY DEPRECATED! Will return in a future versoin of this code.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
@@ -154,18 +174,18 @@ The default behaviour (an empty list) is to download all forecast base times.</p
 </dd>
 <dt><strong>`extra_fields`</strong><span class="classifier">string</span></dt><dd><p>Comma-separated string listing any extra fields.</p>
 </dd>
-<dt><strong>`dataframe`</strong><span class="classifier">boolean</span></dt><dd><p>Set to True to return data as a Python DataFrame. Default is False, i.e. return a list.</p>
+<dt><strong>`dataframe`</strong><span class="classifier">boolean</span></dt><dd><p>Set to True to return data as a Pandas DataFrame. Default is False, i.e. return a list.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
 <dt>list</dt><dd><p>Each element of the outter list is a list containing the pes_id or gsp_id,
-forecast_base_GMT, datetime_gmt and generation_mw fields of a PV_Forecast, plus any
+forecast_base_gmt, datetime_gmt and generation_mw fields of a PV_Forecast, plus any
 extra_fields in the order specified.</p>
 </dd>
 <dt>OR</dt><dd></dd>
-<dt>Pandas DataFrame</dt><dd><p>Contains the columns pes_id or gsp_id, forecast_base_GMT, datetime_gmt and
+<dt>Pandas DataFrame</dt><dd><p>Contains the columns pes_id or gsp_id, forecast_base_gmt, datetime_gmt and
 generation_mw, plus any extra_fields in the order specified.</p>
 </dd>
 </dl>
@@ -188,18 +208,18 @@ generation_mw, plus any extra_fields in the order specified.</p>
 </dd>
 <dt><strong>`extra_fields`</strong><span class="classifier">string</span></dt><dd><p>Comma-separated string listing any extra fields.</p>
 </dd>
-<dt><strong>`dataframe`</strong><span class="classifier">boolean</span></dt><dd><p>Set to True to return data as a Python DataFrame. Default is False, i.e. return a list.</p>
+<dt><strong>`dataframe`</strong><span class="classifier">boolean</span></dt><dd><p>Set to True to return data as a Pandas DataFrame. Default is False, i.e. return a list.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
 <dt>list</dt><dd><p>Each element of the outter list is a list containing the pes_id or gsp_id,
-forecast_base_GMT, datetime_gmt and generation_mw fields of a PV_Forecast, plus any
+forecast_base_gmt, datetime_gmt and generation_mw fields of a PV_Forecast, plus any
 extra_fields in the order specified.</p>
 </dd>
 <dt>OR</dt><dd></dd>
-<dt>Pandas DataFrame</dt><dd><p>Contains the columns pes_id or gsp_id, forecast_base_GMT, datetime_gmt and
+<dt>Pandas DataFrame</dt><dd><p>Contains the columns pes_id or gsp_id, forecast_base_gmt, datetime_gmt and
 generation_mw, plus any extra_fields in the order specified.</p>
 </dd>
 </dl>
@@ -221,7 +241,7 @@ generation_mw, plus any extra_fields in the order specified.</p>
 <dl class="py function">
 <dt id="pvforecast_api.pvforecast.main">
 <code class="sig-prename descclassname"><span class="pre">pvforecast_api.pvforecast.</span></code><code class="sig-name descname"><span class="pre">main</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pvforecast_api/pvforecast.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pvforecast_api.pvforecast.main" title="Permalink to this definition">¶</a></dt>
-<dd><p>Demo the module’s capabilities.</p>
+<dd><p>Placeholder for CLI to be added in future release.</p>
 </dd></dl>
 
 </div>
@@ -278,7 +298,7 @@ generation_mw, plus any extra_fields in the order specified.</p>
         <li class="right" >
           <a href="index.html" title="Welcome to PV_Forecast-API’s documentation!"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">PV_Forecast-API 0.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">PV_Forecast-API 0.3 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Modules</a></li> 
       </ul>
     </div>
