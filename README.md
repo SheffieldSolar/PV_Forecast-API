@@ -6,7 +6,7 @@ A Python implementation of the PV_Forecast web API. See [www.solar.sheffield.ac.
 
 **New! Updated 2021-02-23 to use PV_Forecast API v3.**
 
-## About this respository
+## About this repository
 
 * This Python library provides a convenient interface for the PV_Forecast web API to facilitate accessing PV_Forecast results in Python code.
 * Developed and tested with Python 3.8, should work with Python 3.5+. Support for Python 2.7+ has been discontinued as of 2021-02-23.
