@@ -4,12 +4,13 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Modules &#8212; PV_Forecast-API 0.3 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>Modules &#8212; PV_Forecast-API 0.4 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
@@ -30,7 +31,7 @@
         <li class="right" >
           <a href="index.html" title="Welcome to PV_Forecast-API’s documentation!"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">PV_Forecast-API 0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">PV_Forecast-API 0.4 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Modules</a></li> 
       </ul>
     </div>  
@@ -40,7 +41,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="modules">
+  <section id="modules">
 <h1><a class="toc-backref" href="#id3">Modules</a><a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h1>
 <div class="contents topic" id="contents">
 <p class="topic-title">Contents</p>
@@ -52,7 +53,7 @@
 </li>
 </ul>
 </div>
-<div class="section" id="module-pvforecast_api.pvforecast">
+<section id="module-pvforecast_api.pvforecast">
 <span id="pvforecast-api"></span><h2><a class="toc-backref" href="#id4">pvforecast_api</a><a class="headerlink" href="#module-pvforecast_api.pvforecast" title="Permalink to this headline">¶</a></h2>
 <p>A Python interface for the PV_Forecast web API from Sheffield Solar.</p>
 <ul class="simple">
@@ -60,9 +61,9 @@
 <li><p>First Authored: 2018-08-31</p></li>
 </ul>
 <dl class="py class">
-<dt id="pvforecast_api.pvforecast.PVForecast">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pvforecast_api.pvforecast.</span></code><code class="sig-name descname"><span class="pre">PVForecast</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pvforecast_api/pvforecast.html#PVForecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pvforecast_api.pvforecast.PVForecast" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dt class="sig sig-object py" id="pvforecast_api.pvforecast.PVForecast">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pvforecast_api.pvforecast.</span></span><span class="sig-name descname"><span class="pre">PVForecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pvforecast_api/pvforecast.html#PVForecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pvforecast_api.pvforecast.PVForecast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Interface with the PV_Forecast web API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -101,15 +102,15 @@ other than status code 200. Exponential back-off applies inbetween retries.</p>
 </tbody>
 </table>
 <dl class="py method">
-<dt id="pvforecast_api.pvforecast.PVForecast.get_forecast">
-<code class="sig-name descname"><span class="pre">get_forecast</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">forecast_base_gmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataframe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pvforecast_api/pvforecast.html#PVForecast.get_forecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pvforecast_api.pvforecast.PVForecast.get_forecast" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pvforecast_api.pvforecast.PVForecast.get_forecast">
+<span class="sig-name descname"><span class="pre">get_forecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">forecast_base_gmt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.10)"><span class="pre">datetime.datetime</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'gsp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><span class="pre">int</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_fields</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataframe</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pvforecast_api/pvforecast.html#PVForecast.get_forecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pvforecast_api.pvforecast.PVForecast.get_forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the PV_Forecast with a given forecast base from the API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>`forecast_base_gmt`</strong><span class="classifier">datetime</span></dt><dd><p>A timezone-aware datetime object.</p>
 </dd>
-<dt><strong>`entity_type`</strong><span class="classifier">string</span></dt><dd><p>The aggregation entity type of interest, either “pes” or “gsp”. Defaults to “pes”.</p>
+<dt><strong>`entity_type`</strong><span class="classifier">string</span></dt><dd><p>The aggregation entity type of interest, either “pes” or “gsp”. Defaults to “gsp”.</p>
 </dd>
 <dt><strong>`entity_id`</strong><span class="classifier">int</span></dt><dd><p>The numerical ID of the entity of interest. Defaults to 0 (national).</p>
 </dd>
@@ -133,12 +134,12 @@ generation_mw, plus any extra_fields in the order specified.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>For list of optional <em>extra_fields</em>, see <a class="reference external" href="https://api.solar.sheffield.ac.uk/pvforecast/v3/docs">PV_Forecast API Docs</a>.</p>
+<p>For list of optional <em>extra_fields</em>, see <a class="reference external" href="https://api.solar.sheffield.ac.uk/pvforecast/docs">PV_Forecast API Docs</a>.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pvforecast_api.pvforecast.PVForecast.get_forecast_bases">
-<code class="sig-name descname"><span class="pre">get_forecast_bases</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecast_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'national'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pvforecast_api/pvforecast.html#PVForecast.get_forecast_bases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pvforecast_api.pvforecast.PVForecast.get_forecast_bases" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pvforecast_api.pvforecast.PVForecast.get_forecast_bases">
+<span class="sig-name descname"><span class="pre">get_forecast_bases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.10)"><span class="pre">datetime.datetime</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.10)"><span class="pre">datetime.datetime</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecast_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'national'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pvforecast_api/pvforecast.html#PVForecast.get_forecast_bases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pvforecast_api.pvforecast.PVForecast.get_forecast_bases" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of the forecast base times available on the API between two datetimes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -151,12 +152,18 @@ generation_mw, plus any extra_fields in the order specified.</p>
 </dd>
 </dl>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>list</dt><dd><p>A list of valid forecast base times as strings.</p>
+</dd>
+</dl>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pvforecast_api.pvforecast.PVForecast.get_forecasts">
-<code class="sig-name descname"><span class="pre">get_forecasts</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecast_base_times</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataframe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pvforecast_api/pvforecast.html#PVForecast.get_forecasts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pvforecast_api.pvforecast.PVForecast.get_forecasts" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pvforecast_api.pvforecast.PVForecast.get_forecasts">
+<span class="sig-name descname"><span class="pre">get_forecasts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.10)"><span class="pre">datetime.datetime</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.10)"><span class="pre">datetime.datetime</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecast_base_times</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'gsp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><span class="pre">int</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_fields</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataframe</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pvforecast_api/pvforecast.html#PVForecast.get_forecasts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pvforecast_api.pvforecast.PVForecast.get_forecasts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get multiple PV_Forecasts during a given time interval from the API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -168,7 +175,7 @@ generation_mw, plus any extra_fields in the order specified.</p>
 <dt><strong>`forecast_base_times`</strong><span class="classifier">list</span></dt><dd><p>Optionally provide a list of forecast base times of interest (e.g. [“07:00”, “10:00”]).
 The default behaviour (an empty list) is to download all forecast base times.</p>
 </dd>
-<dt><strong>`entity_type`</strong><span class="classifier">string</span></dt><dd><p>The aggregation entity type of interest, either “pes” or “gsp”. Defaults to “pes”.</p>
+<dt><strong>`entity_type`</strong><span class="classifier">string</span></dt><dd><p>The aggregation entity type of interest, either “pes” or “gsp”. Defaults to “gsp”.</p>
 </dd>
 <dt><strong>`entity_id`</strong><span class="classifier">int</span></dt><dd><p>The numerical ID of the entity of interest. Defaults to 0 (national).</p>
 </dd>
@@ -192,17 +199,17 @@ generation_mw, plus any extra_fields in the order specified.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>For list of optional <em>extra_fields</em>, see <a class="reference external" href="https://api.solar.sheffield.ac.uk/pvforecast/v3/docs">PV_Forecast API Docs</a>.</p>
+<p>For list of optional <em>extra_fields</em>, see <a class="reference external" href="https://api.solar.sheffield.ac.uk/pvforecast/docs">PV_Forecast API Docs</a>.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pvforecast_api.pvforecast.PVForecast.latest">
-<code class="sig-name descname"><span class="pre">latest</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataframe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pvforecast_api/pvforecast.html#PVForecast.latest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pvforecast_api.pvforecast.PVForecast.latest" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pvforecast_api.pvforecast.PVForecast.latest">
+<span class="sig-name descname"><span class="pre">latest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'gsp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><span class="pre">int</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_fields</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataframe</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pvforecast_api/pvforecast.html#PVForecast.latest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pvforecast_api.pvforecast.PVForecast.latest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the latest PV_Forecast from the API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>`entity_type`</strong><span class="classifier">string</span></dt><dd><p>The aggregation entity type of interest, either “pes” or “gsp”. Defaults to “pes”.</p>
+<dt><strong>`entity_type`</strong><span class="classifier">string</span></dt><dd><p>The aggregation entity type of interest, either “pes” or “gsp”. Defaults to “gsp”.</p>
 </dd>
 <dt><strong>`entity_id`</strong><span class="classifier">int</span></dt><dd><p>The numerical ID of the entity of interest. Defaults to 0 (national).</p>
 </dd>
@@ -226,26 +233,26 @@ generation_mw, plus any extra_fields in the order specified.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>For list of optional <em>extra_fields</em>, see <a class="reference external" href="https://api.solar.sheffield.ac.uk/pvforecast/v3/docs">PV_Forecast API Docs</a>.</p>
+<p>For list of optional <em>extra_fields</em>, see <a class="reference external" href="https://api.solar.sheffield.ac.uk/pvforecast/docs">PV_Forecast API Docs</a>.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py exception">
-<dt id="pvforecast_api.pvforecast.PVForecastException">
-<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">pvforecast_api.pvforecast.</span></code><code class="sig-name descname"><span class="pre">PVForecastException</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pvforecast_api/pvforecast.html#PVForecastException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pvforecast_api.pvforecast.PVForecastException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<dt class="sig sig-object py" id="pvforecast_api.pvforecast.PVForecastException">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">pvforecast_api.pvforecast.</span></span><span class="sig-name descname"><span class="pre">PVForecastException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pvforecast_api/pvforecast.html#PVForecastException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pvforecast_api.pvforecast.PVForecastException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 <p>An Exception specific to the PVForecast class.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pvforecast_api.pvforecast.main">
-<code class="sig-prename descclassname"><span class="pre">pvforecast_api.pvforecast.</span></code><code class="sig-name descname"><span class="pre">main</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pvforecast_api/pvforecast.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pvforecast_api.pvforecast.main" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pvforecast_api.pvforecast.main">
+<span class="sig-prename descclassname"><span class="pre">pvforecast_api.pvforecast.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pvforecast_api/pvforecast.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pvforecast_api.pvforecast.main" title="Permalink to this definition">¶</a></dt>
 <dd><p>Placeholder for CLI to be added in future release.</p>
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
             <div class="clearer"></div>
@@ -298,13 +305,13 @@ generation_mw, plus any extra_fields in the order specified.</p>
         <li class="right" >
           <a href="index.html" title="Welcome to PV_Forecast-API’s documentation!"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">PV_Forecast-API 0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">PV_Forecast-API 0.4 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Modules</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Jamie Taylor.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.1.
     </div>
   </body>
 </html>

@@ -5,11 +5,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pvforecast_api.pvforecast &#8212; PV_Forecast-API 0.3 documentation</title>
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <title>pvforecast_api.pvforecast &#8212; PV_Forecast-API 0.4 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css" />
     
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
@@ -26,7 +26,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">PV_Forecast-API 0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">PV_Forecast-API 0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pvforecast_api.pvforecast</a></li> 
       </ul>
@@ -49,6 +49,7 @@
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">time</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">ceil</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">pytz</span>
 <span class="kn">import</span> <span class="nn">requests</span>
@@ -89,28 +90,38 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">api_key</span><span class="p">,</span> <span class="n">retries</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">user_id</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">api_key</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">PVForecastException</span><span class="p">(</span><span class="s2">&quot;You must pass a valid user_id and api_key.&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="s2">&quot;https://api.solar.sheffield.ac.uk/pvforecast/v3/&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="s2">&quot;https://api0.solar.sheffield.ac.uk/pvforecast/api/v4/&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">retries</span> <span class="o">=</span> <span class="n">retries</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span> <span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">api_key</span><span class="p">,</span> <span class="s2">&quot;data_format&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ggd_lookup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ggd_lookup</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gsp_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ggd_lookup</span><span class="o">.</span><span class="n">gsp_id</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">int64</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pes_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ggd_lookup</span><span class="o">.</span><span class="n">pes_id</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">int64</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gsp_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_gsp_list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pes_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pes_list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gsp_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gsp_list</span><span class="o">.</span><span class="n">gsp_id</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">int64</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pes_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pes_list</span><span class="o">.</span><span class="n">pes_id</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">int64</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_get_ggd_lookup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Fetch the GGD lookup from the API and convert to Pandas DataFrame.&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://api0.solar.sheffield.ac.uk/pvlive/v3/ggd_list&quot;</span>
+    <span class="k">def</span> <span class="nf">_get_gsp_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fetch the GSP list from the API and convert to Pandas DataFrame.&quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="si">}</span><span class="s2">/gsp_list&quot;</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        <span class="n">ggd_lookup</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;meta&quot;</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">ggd_lookup</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;meta&quot;</span><span class="p">])</span>
 
-<div class="viewcode-block" id="PVForecast.latest"><a class="viewcode-back" href="../../modules.html#pvforecast_api.pvforecast.PVForecast.latest">[docs]</a>    <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity_type</span><span class="o">=</span><span class="s2">&quot;pes&quot;</span><span class="p">,</span> <span class="n">entity_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">extra_fields</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">dataframe</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_pes_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fetch the PES list from the API and convert to Pandas DataFrame.&quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="si">}</span><span class="s2">/pes_list&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;meta&quot;</span><span class="p">])</span>
+
+<div class="viewcode-block" id="PVForecast.latest"><a class="viewcode-back" href="../../modules.html#pvforecast_api.pvforecast.PVForecast.latest">[docs]</a>    <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+               <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gsp&quot;</span><span class="p">,</span>
+               <span class="n">entity_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+               <span class="n">extra_fields</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+               <span class="n">dataframe</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the latest PV_Forecast from the API.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        `entity_type` : string</span>
-<span class="sd">            The aggregation entity type of interest, either &quot;pes&quot; or &quot;gsp&quot;. Defaults to &quot;pes&quot;.</span>
+<span class="sd">            The aggregation entity type of interest, either &quot;pes&quot; or &quot;gsp&quot;. Defaults to &quot;gsp&quot;.</span>
 <span class="sd">        `entity_id` : int</span>
 <span class="sd">            The numerical ID of the entity of interest. Defaults to 0 (national).</span>
 <span class="sd">        `extra_fields` : string</span>
@@ -132,13 +143,17 @@
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        For list of optional *extra_fields*, see `PV_Forecast API Docs</span>
-<span class="sd">        &lt;https://api.solar.sheffield.ac.uk/pvforecast/v3/docs&gt;`_.</span>
+<span class="sd">        &lt;https://api.solar.sheffield.ac.uk/pvforecast/docs&gt;`_.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_forecast</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="n">entity_type</span><span class="p">,</span> <span class="n">entity_id</span><span class="o">=</span><span class="n">entity_id</span><span class="p">,</span>
                                  <span class="n">extra_fields</span><span class="o">=</span><span class="n">extra_fields</span><span class="p">,</span> <span class="n">dataframe</span><span class="o">=</span><span class="n">dataframe</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PVForecast.get_forecast"><a class="viewcode-back" href="../../modules.html#pvforecast_api.pvforecast.PVForecast.get_forecast">[docs]</a>    <span class="k">def</span> <span class="nf">get_forecast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">forecast_base_gmt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">entity_type</span><span class="o">=</span><span class="s2">&quot;pes&quot;</span><span class="p">,</span> <span class="n">entity_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">extra_fields</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-                     <span class="n">dataframe</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="PVForecast.get_forecast"><a class="viewcode-back" href="../../modules.html#pvforecast_api.pvforecast.PVForecast.get_forecast">[docs]</a>    <span class="k">def</span> <span class="nf">get_forecast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                     <span class="n">forecast_base_gmt</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gsp&quot;</span><span class="p">,</span>
+                     <span class="n">entity_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                     <span class="n">extra_fields</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                     <span class="n">dataframe</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the PV_Forecast with a given forecast base from the API.</span>
 
@@ -147,7 +162,7 @@
 <span class="sd">        `forecast_base_gmt` : datetime</span>
 <span class="sd">            A timezone-aware datetime object.</span>
 <span class="sd">        `entity_type` : string</span>
-<span class="sd">            The aggregation entity type of interest, either &quot;pes&quot; or &quot;gsp&quot;. Defaults to &quot;pes&quot;.</span>
+<span class="sd">            The aggregation entity type of interest, either &quot;pes&quot; or &quot;gsp&quot;. Defaults to &quot;gsp&quot;.</span>
 <span class="sd">        `entity_id` : int</span>
 <span class="sd">            The numerical ID of the entity of interest. Defaults to 0 (national).</span>
 <span class="sd">        `extra_fields` : string</span>
@@ -169,7 +184,7 @@
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        For list of optional *extra_fields*, see `PV_Forecast API Docs</span>
-<span class="sd">        &lt;https://api.solar.sheffield.ac.uk/pvforecast/v3/docs&gt;`_.</span>
+<span class="sd">        &lt;https://api.solar.sheffield.ac.uk/pvforecast/docs&gt;`_.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_forecast</span><span class="p">(</span><span class="n">forecast_base_gmt</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">,</span> <span class="n">entity_id</span><span class="p">,</span> <span class="n">extra_fields</span><span class="p">,</span>
                                   <span class="n">dataframe</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
@@ -188,7 +203,10 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_tuple_to_df</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">],</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;meta&quot;</span><span class="p">]),</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;meta&quot;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">],</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;meta&quot;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="PVForecast.get_forecast_bases"><a class="viewcode-back" href="../../modules.html#pvforecast_api.pvforecast.PVForecast.get_forecast_bases">[docs]</a>    <span class="k">def</span> <span class="nf">get_forecast_bases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">forecast_type</span><span class="o">=</span><span class="s2">&quot;national&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="PVForecast.get_forecast_bases"><a class="viewcode-back" href="../../modules.html#pvforecast_api.pvforecast.PVForecast.get_forecast_bases">[docs]</a>    <span class="k">def</span> <span class="nf">get_forecast_bases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                           <span class="n">start</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
+                           <span class="n">end</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
+                           <span class="n">forecast_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;national&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a list of the forecast base times available on the API between two datetimes.</span>
 
@@ -200,20 +218,31 @@
 <span class="sd">            A timezone-aware datetime object.</span>
 <span class="sd">        `forecast_type` : str</span>
 <span class="sd">            Either &#39;national&#39; or &#39;regional&#39;.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            A list of valid forecast base times as strings.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_start_end</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">forecast_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;national&quot;</span><span class="p">:</span>
-            <span class="n">ggd_id</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">gsp_id</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">elif</span> <span class="n">forecast_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;regional&quot;</span><span class="p">:</span>
-            <span class="n">ggd_id</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">gsp_id</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">PVForecastException</span><span class="p">(</span><span class="s2">&quot;forecast_type must be &#39;national&#39; or &#39;regional&#39;.&quot;</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iso8601_ss</span><span class="p">(</span><span class="n">start</span><span class="p">),</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iso8601_ss</span><span class="p">(</span><span class="n">end</span><span class="p">)}</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_api</span><span class="p">(</span><span class="s2">&quot;forecast_bases_list&quot;</span><span class="p">,</span> <span class="n">ggd_id</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_api</span><span class="p">(</span><span class="s2">&quot;forecast_bases_list&quot;</span><span class="p">,</span> <span class="n">gsp_id</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">response</span></div>
 
-<div class="viewcode-block" id="PVForecast.get_forecasts"><a class="viewcode-back" href="../../modules.html#pvforecast_api.pvforecast.PVForecast.get_forecasts">[docs]</a>    <span class="k">def</span> <span class="nf">get_forecasts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">forecast_base_times</span><span class="o">=</span><span class="p">[],</span> <span class="n">entity_type</span><span class="o">=</span><span class="s2">&quot;pes&quot;</span><span class="p">,</span> <span class="n">entity_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                      <span class="n">extra_fields</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">dataframe</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="PVForecast.get_forecasts"><a class="viewcode-back" href="../../modules.html#pvforecast_api.pvforecast.PVForecast.get_forecasts">[docs]</a>    <span class="k">def</span> <span class="nf">get_forecasts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                      <span class="n">start</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
+                      <span class="n">end</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
+                      <span class="n">forecast_base_times</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+                      <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gsp&quot;</span><span class="p">,</span>
+                      <span class="n">entity_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                      <span class="n">extra_fields</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                      <span class="n">dataframe</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get multiple PV_Forecasts during a given time interval from the API.</span>
 
@@ -227,7 +256,7 @@
 <span class="sd">            Optionally provide a list of forecast base times of interest (e.g. [&quot;07:00&quot;, &quot;10:00&quot;]).</span>
 <span class="sd">            The default behaviour (an empty list) is to download all forecast base times.</span>
 <span class="sd">        `entity_type` : string</span>
-<span class="sd">            The aggregation entity type of interest, either &quot;pes&quot; or &quot;gsp&quot;. Defaults to &quot;pes&quot;.</span>
+<span class="sd">            The aggregation entity type of interest, either &quot;pes&quot; or &quot;gsp&quot;. Defaults to &quot;gsp&quot;.</span>
 <span class="sd">        `entity_id` : int</span>
 <span class="sd">            The numerical ID of the entity of interest. Defaults to 0 (national).</span>
 <span class="sd">        `extra_fields` : string</span>
@@ -249,7 +278,7 @@
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        For list of optional *extra_fields*, see `PV_Forecast API Docs</span>
-<span class="sd">        &lt;https://api.solar.sheffield.ac.uk/pvforecast/v3/docs&gt;`_.</span>
+<span class="sd">        &lt;https://api.solar.sheffield.ac.uk/pvforecast/docs&gt;`_.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_start_end</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_inputs</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="n">entity_type</span><span class="p">,</span> <span class="n">entity_id</span><span class="o">=</span><span class="n">entity_id</span><span class="p">,</span>
@@ -263,11 +292,14 @@
         <span class="n">fbases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_forecast_bases</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">forecast_type</span><span class="p">)</span>
         <span class="n">fbases</span> <span class="o">=</span> <span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">fb</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;+00:00&quot;</span><span class="p">))</span> <span class="k">for</span> <span class="n">fb</span> <span class="ow">in</span> <span class="n">fbases</span><span class="p">]</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">fbase</span> <span class="ow">in</span> <span class="n">fbases</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">forecast_base_times</span> <span class="ow">or</span> <span class="n">fbase</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">forecast_base_times</span><span class="p">:</span>
-                <span class="n">data_</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_forecast</span><span class="p">(</span><span class="n">forecast_base_gmt</span><span class="o">=</span><span class="n">fbase</span><span class="p">,</span> <span class="n">entity_type</span><span class="o">=</span><span class="n">entity_type</span><span class="p">,</span>
+                <span class="n">data_</span><span class="p">,</span> <span class="n">meta_</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_forecast</span><span class="p">(</span><span class="n">forecast_base_gmt</span><span class="o">=</span><span class="n">fbase</span><span class="p">,</span> <span class="n">entity_type</span><span class="o">=</span><span class="n">entity_type</span><span class="p">,</span>
                                                 <span class="n">entity_id</span><span class="o">=</span><span class="n">entity_id</span><span class="p">,</span> <span class="n">extra_fields</span><span class="o">=</span><span class="n">extra_fields</span><span class="p">)</span>
-                <span class="n">data</span> <span class="o">+=</span> <span class="n">data_</span>
+                <span class="k">if</span> <span class="n">data_</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">+=</span> <span class="n">data_</span>
+                    <span class="n">meta</span> <span class="o">=</span> <span class="n">meta_</span>
         <span class="k">if</span> <span class="n">dataframe</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_tuple_to_df</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span></div>
@@ -328,8 +360,10 @@
         <span class="n">type_check</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">datetime</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="n">datetime</span><span class="p">))</span>
         <span class="n">tz_check</span> <span class="o">=</span> <span class="n">start</span><span class="o">.</span><span class="n">tzinfo</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">end</span><span class="o">.</span><span class="n">tzinfo</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">type_check</span> <span class="ow">or</span> <span class="n">tz_check</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">PVForecastException</span><span class="p">(</span><span class="s2">&quot;Start and end must be timezone-aware Python datetime &quot;</span>
+            <span class="k">raise</span> <span class="n">PVForecastException</span><span class="p">(</span><span class="s2">&quot;start and end must be timezone-aware Python datetime &quot;</span>
                                       <span class="s2">&quot;objects.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">end</span> <span class="o">&lt;</span> <span class="n">start</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">PVForecastException</span><span class="p">(</span><span class="s2">&quot;end must be later than start.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_validate_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">forecast_base_gmt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">entity_type</span><span class="o">=</span><span class="s2">&quot;pes&quot;</span><span class="p">,</span> <span class="n">entity_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                          <span class="n">extra_fields</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
@@ -401,14 +435,14 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">PV_Forecast-API 0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">PV_Forecast-API 0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pvforecast_api.pvforecast</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Jamie Taylor.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.1.
     </div>
   </body>
 </html>

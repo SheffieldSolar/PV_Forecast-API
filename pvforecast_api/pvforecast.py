@@ -9,6 +9,7 @@ import sys
 from datetime import datetime, timedelta, date, time
 from math import ceil
 from time import sleep
+from typing import List, Union, Tuple
 import json
 import pytz
 import requests
@@ -49,28 +50,38 @@ class PVForecast:
     def __init__(self, user_id, api_key, retries=3):
         if not user_id or not api_key:
             raise PVForecastException("You must pass a valid user_id and api_key.")
-        self.base_url = "https://api.solar.sheffield.ac.uk/pvforecast/v3/"
+        self.base_url = "https://api0.solar.sheffield.ac.uk/pvforecast/api/v4/"
         self.retries = retries
         self.params = {"user_id": user_id, "key": api_key, "data_format": "json"}
-        self.ggd_lookup = self._get_ggd_lookup()
-        self.gsp_ids = self.ggd_lookup.gsp_id.dropna().astype(int64).unique()
-        self.pes_ids = self.ggd_lookup.pes_id.dropna().astype(int64).unique()
+        self.gsp_list = self._get_gsp_list()
+        self.pes_list = self._get_pes_list()
+        self.gsp_ids = self.gsp_list.gsp_id.dropna().astype(int64).unique()
+        self.pes_ids = self.pes_list.pes_id.dropna().astype(int64).unique()
 
-    def _get_ggd_lookup(self):
-        """Fetch the GGD lookup from the API and convert to Pandas DataFrame."""
-        url = "https://api0.solar.sheffield.ac.uk/pvlive/v3/ggd_list"
+    def _get_gsp_list(self):
+        """Fetch the GSP list from the API and convert to Pandas DataFrame."""
+        url = f"{self.base_url}/gsp_list"
         response = self._fetch_url(url)
-        ggd_lookup = pd.DataFrame(response["data"], columns=response["meta"])
-        return ggd_lookup
+        return pd.DataFrame(response["data"], columns=response["meta"])
 
-    def latest(self, entity_type="pes", entity_id=0, extra_fields="", dataframe=False):
+    def _get_pes_list(self):
+        """Fetch the PES list from the API and convert to Pandas DataFrame."""
+        url = f"{self.base_url}/pes_list"
+        response = self._fetch_url(url)
+        return pd.DataFrame(response["data"], columns=response["meta"])
+
+    def latest(self, 
+               entity_type: str = "gsp",
+               entity_id: int = 0,
+               extra_fields: str = "",
+               dataframe: bool = False) -> Union[List, pd.DataFrame]:
         """
         Get the latest PV_Forecast from the API.
 
         Parameters
         ----------
         `entity_type` : string
-            The aggregation entity type of interest, either "pes" or "gsp". Defaults to "pes".
+            The aggregation entity type of interest, either "pes" or "gsp". Defaults to "gsp".
         `entity_id` : int
             The numerical ID of the entity of interest. Defaults to 0 (national).
         `extra_fields` : string
@@ -92,13 +103,17 @@ class PVForecast:
         Notes
         -----
         For list of optional *extra_fields*, see `PV_Forecast API Docs
-        <https://api.solar.sheffield.ac.uk/pvforecast/v3/docs>`_.
+        <https://api.solar.sheffield.ac.uk/pvforecast/docs>`_.
         """
         return self.get_forecast(entity_type=entity_type, entity_id=entity_id,
                                  extra_fields=extra_fields, dataframe=dataframe)
 
-    def get_forecast(self, forecast_base_gmt=None, entity_type="pes", entity_id=0, extra_fields="",
-                     dataframe=False):
+    def get_forecast(self,
+                     forecast_base_gmt: datetime = None,
+                     entity_type: str = "gsp",
+                     entity_id: int = 0,
+                     extra_fields: str = "",
+                     dataframe: bool = False) -> Union[List, pd.DataFrame]:
         """
         Get the PV_Forecast with a given forecast base from the API.
 
@@ -107,7 +122,7 @@ class PVForecast:
         `forecast_base_gmt` : datetime
             A timezone-aware datetime object.
         `entity_type` : string
-            The aggregation entity type of interest, either "pes" or "gsp". Defaults to "pes".
+            The aggregation entity type of interest, either "pes" or "gsp". Defaults to "gsp".
         `entity_id` : int
             The numerical ID of the entity of interest. Defaults to 0 (national).
         `extra_fields` : string
@@ -129,7 +144,7 @@ class PVForecast:
         Notes
         -----
         For list of optional *extra_fields*, see `PV_Forecast API Docs
-        <https://api.solar.sheffield.ac.uk/pvforecast/v3/docs>`_.
+        <https://api.solar.sheffield.ac.uk/pvforecast/docs>`_.
         """
         return self._get_forecast(forecast_base_gmt, entity_type, entity_id, extra_fields,
                                   dataframe)[0]
@@ -148,7 +163,10 @@ class PVForecast:
             return self._convert_tuple_to_df(response["data"], response["meta"]), response["meta"]
         return response["data"], response["meta"]
 
-    def get_forecast_bases(self, start, end, forecast_type="national"):
+    def get_forecast_bases(self,
+                           start: datetime,
+                           end: datetime,
+                           forecast_type: str = "national") -> List[str]:
         """
         Get a list of the forecast base times available on the API between two datetimes.
 
@@ -160,20 +178,31 @@ class PVForecast:
             A timezone-aware datetime object.
         `forecast_type` : str
             Either 'national' or 'regional'.
+
+        Returns
+        -------
+        list
+            A list of valid forecast base times as strings.
         """
         self._validate_start_end(start, end)
         if forecast_type.lower() == "national":
-            ggd_id = 0
+            gsp_id = 0
         elif forecast_type.lower() == "regional":
-            ggd_id = 1
+            gsp_id = 1
         else:
             raise PVForecastException("forecast_type must be 'national' or 'regional'.")
         params = {"start": self._iso8601_ss(start), "end": self._iso8601_ss(end)}
-        response = self._query_api("forecast_bases_list", ggd_id, params)
+        response = self._query_api("forecast_bases_list", gsp_id, params)
         return response
 
-    def get_forecasts(self, start, end, forecast_base_times=[], entity_type="pes", entity_id=0,
-                      extra_fields="", dataframe=False):
+    def get_forecasts(self,
+                      start: datetime,
+                      end: datetime,
+                      forecast_base_times: List[str] = [],
+                      entity_type: str = "gsp",
+                      entity_id: int = 0,
+                      extra_fields: str = "",
+                      dataframe: bool = False) -> Union[List, pd.DataFrame]:
         """
         Get multiple PV_Forecasts during a given time interval from the API.
 
@@ -187,7 +216,7 @@ class PVForecast:
             Optionally provide a list of forecast base times of interest (e.g. ["07:00", "10:00"]).
             The default behaviour (an empty list) is to download all forecast base times.
         `entity_type` : string
-            The aggregation entity type of interest, either "pes" or "gsp". Defaults to "pes".
+            The aggregation entity type of interest, either "pes" or "gsp". Defaults to "gsp".
         `entity_id` : int
             The numerical ID of the entity of interest. Defaults to 0 (national).
         `extra_fields` : string
@@ -209,7 +238,7 @@ class PVForecast:
         Notes
         -----
         For list of optional *extra_fields*, see `PV_Forecast API Docs
-        <https://api.solar.sheffield.ac.uk/pvforecast/v3/docs>`_.
+        <https://api.solar.sheffield.ac.uk/pvforecast/docs>`_.
         """
         self._validate_start_end(start, end)
         self._validate_inputs(entity_type=entity_type, entity_id=entity_id,
