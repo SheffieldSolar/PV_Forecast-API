@@ -2,9 +2,10 @@
 # PV_Forecast-API
 A Python implementation of the PV_Forecast web API. See [www.solar.sheffield.ac.uk/pvforecast/](https://www.solar.sheffield.ac.uk/pvforecast/) and [api.solar.sheffield.ac.uk](https://api.solar.sheffield.ac.uk/)
 
-**Latest Version: 0.4**
+**Latest Version: 0.5*
 
 **New! Updated 2022-08-01 to use PV_Forecast API v4.**
+**New! Updated 2022-12-12 to add support for proxy connections and add command line arguments.**
 
 ## About this repository
 
@@ -58,6 +59,44 @@ pvf = PVForecast(user_id="", api_key="") # Enter your user_id and api_key here!
 |Get the latest aggregated outturn forecast for **GSP** ID **152** (INDQ1 or "Indian Queens")|`pvf.latest(entity_type="gsp", entity_id=152, dataframe=True)`|![Screenshot of output](/misc/code_example_output2.png?raw=true)
 |Get the nationally aggregated GB PV outturn forecast with forecast base `2021-02-23T07:00:00Z` as a DataFrame|`pvf.get_forecast(datetime(2021, 2, 23, 7, 0, tzinfo=pytz.utc), dataframe=True))`|![Screenshot of output](/misc/code_example_output3.png?raw=true)|
 |Get all 07:00 nationally aggregated GB PV outturn forecasts between `2021-02-23T01:00:00Z` and `2021-02-23T07:00:00Z`, as a DataFrame|`pvf.get_forecasts(datetime(2021, 2, 23, 1, 0, tzinfo=pytz.utc), datetime(2021, 2, 23, 7, 0, tzinfo=pytz.utc), forecast_base_times=["07:00"], dataframe=True))`|![Screenshot of output](/misc/code_example_output4.png?raw=true)|
+
+## Command Line Utilities
+
+### pvforecast
+
+This utility can be used to download data to a CSV file:
+
+```
+usage: pvforecast.py [-h] --user_id <user_id> --api_key <api_key> [-s "<yyyy-mm-dd HH:MM:SS>"] [-e "<yyyy-mm-dd HH:MM:SS>"]
+                     [--entity_type <entity_type>] [--entity_id <entity_id>] [-q] [-o </path/to/output/file>] [-http <http_proxy>]
+                     [-https <https_proxy>]
+
+This is a command line interface (CLI) for the PVForecast API module
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --user_id <user_id>   PVForecast user id.
+  --api_key <api_key>   Path to .txt file holding PVForecast API key.
+  -s "<yyyy-mm-dd HH:MM:SS>", --start "<yyyy-mm-dd HH:MM:SS>"
+                        Specify a UTC start date in 'yyyy-mm-dd HH:MM:SS' format (inclusive), default behaviour is to retrieve the
+                        latest outturn.
+  -e "<yyyy-mm-dd HH:MM:SS>", --end "<yyyy-mm-dd HH:MM:SS>"
+                        Specify a UTC end date in 'yyyy-mm-dd HH:MM:SS' format (inclusive), default behaviour is to retrieve the
+                        latest outturn.
+  --entity_type <entity_type>
+                        Specify an entity type, either 'gsp' or 'pes'. Default is 'gsp'.
+  --entity_id <entity_id>
+                        Specify an entity ID, default is 0 (i.e. national).
+  -q, --quiet           Specify to not print anything to stdout.
+  -o </path/to/output/file>, --outfile </path/to/output/file>
+                        Specify a CSV file to write results to.
+  -http <http_proxy>, -http-proxy <http_proxy>
+                        HTTP Proxy address
+  -https <https_proxy>, -https-proxy <https_proxy>
+                        HTTPS Proxy address
+
+Jamie Taylor & Ethan Jones, 2022-10-12
+```
 
 ## Documentation
 

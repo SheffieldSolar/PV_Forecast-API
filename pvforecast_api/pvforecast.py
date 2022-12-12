@@ -45,7 +45,9 @@ class PVForecast:
     `retries` : int
         Optionally specify the number of retries to use should the API respond with anything
         other than status code 200. Exponential back-off applies inbetween retries.
-
+    `proxies` : Dict
+        Optionally specify a Dict of proxies for http and https requests in the format:
+        {"http": "<address>", "https": "<address>"}
     Notes
     -----
     To obtain a User ID and API key, please visit the `PV_Forecast API website <https://api.solar.sheffield.ac.uk/pvforecast/>`_.
