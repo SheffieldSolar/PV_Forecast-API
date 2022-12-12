@@ -2,7 +2,9 @@
 A Python interface for the PV_Forecast web API from Sheffield Solar.
 
 - Jamie Taylor <jamie.taylor@sheffield.ac.uk>
+- Ethan Jones <ejones18@sheffield.ac.uk>
 - First Authored: 2018-08-31
+- Updated: 2022-10-12 to provide support for proxy connections.
 """
 
 import sys
@@ -13,9 +15,10 @@ from typing import List, Union, Tuple
 import json
 import pytz
 import requests
+
+import argparse
 from numpy import nan, int64
 import pandas as pd
-
 
 class PVForecastException(Exception):
     """An Exception specific to the PVForecast class."""
@@ -47,9 +50,10 @@ class PVForecast:
     -----
     To obtain a User ID and API key, please visit the `PV_Forecast API website <https://api.solar.sheffield.ac.uk/pvforecast/>`_.
     """
-    def __init__(self, user_id, api_key, retries=3):
-        if not user_id or not api_key:
-            raise PVForecastException("You must pass a valid user_id and api_key.")
+    def __init__(self, user_id, api_key, proxies=None, retries=3):
+        self.requests_session = requests.Session()
+        if proxies is not None:
+            self.requests_session.proxies.update(proxies)
         self.base_url = "https://api0.solar.sheffield.ac.uk/pvforecast/api/v4/"
         self.retries = retries
         self.params = {"user_id": user_id, "key": api_key, "data_format": "json"}
@@ -296,7 +300,7 @@ class PVForecast:
         while not success and try_counter < self.retries + 1:
             try_counter += 1
             try:
-                page = requests.get(url)
+                page = self.requests_session.get(url)
                 page.raise_for_status()
                 if page.status_code == 200 and "Your api key is not valid" in page.text:
                     raise PVForecastException("The user_id and/or api_key entered are invalid.")
@@ -357,10 +361,98 @@ class PVForecast:
             data.datetime_gmt = pd.to_datetime(data.datetime_gmt)
         return data
 
-def main():
-    """Placeholder for CLI to be added in future release."""
-    print("There is no CLI for this module yet.")
-    sys.exit()
+def parse_options():
+    """Parse command line options."""
+    parser = argparse.ArgumentParser(description=("This is a command line interface (CLI) for the "
+                                                  "PVForecast API module"),
+                                     epilog="Jamie Taylor & Ethan Jones, 2022-10-12")
+    parser.add_argument("--user_id", metavar="<user_id>", dest="user_id", action="store",
+                        type=str, required=True, help="PVForecast user id.")
+    parser.add_argument("--api_key", metavar="<api_key>", dest="api_key", action="store",
+                        type=str, required=True, help="Path to .txt file holding PVForecast API key.")
+    parser.add_argument("-s", "--start", metavar="\"<yyyy-mm-dd HH:MM:SS>\"", dest="start",
+                        action="store", type=str, required=False, default=None,
+                        help="Specify a UTC start date in 'yyyy-mm-dd HH:MM:SS' format "
+                             "(inclusive), default behaviour is to retrieve the latest outturn.")
+    parser.add_argument("-e", "--end", metavar="\"<yyyy-mm-dd HH:MM:SS>\"", dest="end",
+                        action="store", type=str, required=False, default=None,
+                        help="Specify a UTC end date in 'yyyy-mm-dd HH:MM:SS' format (inclusive), "
+                        "default behaviour is to retrieve the latest outturn.")
+    parser.add_argument("--entity_type", metavar="<entity_type>", dest="entity_type",
+                        action="store", type=str, required=False, default="gsp",
+                        choices=["gsp", "pes"],
+                        help="Specify an entity type, either 'gsp' or 'pes'. Default is 'gsp'.")
+    parser.add_argument("--entity_id", metavar="<entity_id>", dest="entity_id", action="store",
+                        type=int, required=False, default=0,
+                        help="Specify an entity ID, default is 0 (i.e. national).")
+    parser.add_argument("-q", "--quiet", dest="quiet", action="store_true",
+                        required=False, help="Specify to not print anything to stdout.")
+    parser.add_argument("-o", "--outfile", metavar="</path/to/output/file>", dest="outfile",
+                        action="store", type=str, required=False,
+                        help="Specify a CSV file to write results to.")
+    parser.add_argument('-http', '-http-proxy', metavar="<http_proxy>", dest="http",
+                        type=str, required=False, default=None, action="store",
+                        help="HTTP Proxy address")
+    parser.add_argument('-https', '-https-proxy', metavar="<https_proxy>", dest="https",
+                        type=str, required=False, default=None, action="store",
+                        help="HTTPS Proxy address")
+    options = parser.parse_args()
 
+    def handle_options(options):
+        """Validate command line args and pre-process where necessary."""
+        try:
+            with open(options.api_key) as f:
+                key = f.readline()
+            options.api_key = key
+        except:
+            raise Exception("OptionsError: Failed to read API key correctly")
+        if (options.outfile is not None and os.path.exists(options.outfile)) and not options.quiet:
+            try:
+                input(f"The output file '{options.outfile}' already exists and will be "
+                      "overwritten, are you sure you want to continue? Press enter to continue or "
+                      "ctrl+c to abort.")
+            except KeyboardInterrupt:
+                print()
+                print("Aborting...")
+                sys.exit(0)
+        if options.start is not None:
+            try:
+                options.start = pytz.utc.localize(
+                    datetime.strptime(options.start, "%Y-%m-%d %H:%M:%S")
+                )
+            except:
+                raise Exception("OptionsError: Failed to parse start datetime, make sure you use "
+                                "'yyyy-mm-dd HH:MM:SS' format.")
+        if options.end is not None:
+            try:
+                options.end = pytz.utc.localize(datetime.strptime(options.end, "%Y-%m-%d %H:%M:%S"))
+            except:
+                raise Exception("OptionsError: Failed to parse end datetime, make sure you use "
+                                "'yyyy-mm-dd HH:MM:SS' format.")
+        proxies = {}
+        if options.http is not None:
+            proxies.update({"http": options.http})
+        if options.https is not None:
+            proxies.update({"https": options.https})
+        options.proxies = proxies
+        return options
+    return handle_options(options)
+
+def main():
+    options = parse_options()
+    pvforecast = PVForecast(options.user_id, options.api_key, options.proxies)
+    if options.start is None and options.end is None:
+        data = pvforecast.latest(entity_type=options.entity_type, entity_id=options.entity_id,
+                                 dataframe=True)
+    else:
+        start = datetime(2014, 1, 1, 0, 30, tzinfo=pytz.utc) if options.start is None \
+            else options.start
+        end = pytz.utc.localize(datetime.utcnow()) if options.end is None else options.end
+        data = pvforecast.get_forecasts(start, end, entity_type=options.entity_type,
+                                        entity_id=options.entity_id, dataframe=True)
+    if options.outfile is not None:
+        data.to_csv(options.outfile, float_format="%.3f", index=False)
+    if not options.quiet:
+        print(data)
 if __name__ == "__main__":
     main()
