@@ -10,7 +10,33 @@ A Python implementation of the PV_Forecast web API. See [www.solar.sheffield.ac.
 ## About this repository
 
 * This Python library provides a convenient interface for the PV_Forecast web API to facilitate accessing PV_Forecast results in Python code.
-* Developed and tested with Python 3.8, should work with Python 3.7+. Support for Python 2.7+ has been discontinued as of 2021-02-23.
+* Developed and tested with Python 3.10, should work with Python 3.7+. Support for Python 2.7+ has been discontinued as of 2021-02-23.
+
+## About the PV_Forecast service
+
+Sheffield Solar's PV_Forecast is a commercial service providing forecasts of half-hourly aggregated solar PV outturns across GB. You can sign up for a free trial via [api.solar.sheffield.ac.uk/pvforecast/](https://api.solar.sheffield.ac.uk/pvforecast/), but for continued access you'll need a paid subscription, for which you can email pvforecast@sheffield.ac.uk.
+
+There are currently three tiers of Sheffield Solar's PV_Forecast service: Nationally-aggregated, Regionally-aggregated by DNO License Area (a.k.a PES or GSP Group) and Regionally-aggregated by Grid Supply Point (GSP).
+
+The national forecast includes several updates per day whereas the regional forecasts are currently only updated once a day:
+
+- The nationally aggregated PV forecast gives half hourly outturn estimates with regular updates:
+    - 01:00, 02:00, 03:00, 04:00, 05:00, 06:00, 10:00, 13:00, 16:00, 19:00, 22:00 each day
+        - Out to 72 hours
+    - 07:00 each day
+        - Out to 120 hours
+- The regional forecast produces a half-hourly outturn estimate by GSP or by PES (a.k.a DNO License Area or GSP Group Region) with a single daily update (though we are looking to potentially add a second daily update):
+    - 07:00 each day
+        - Out to 72 hours
+
+(N.B. Times above refer to the NWP releases from our weather forecast provider, DTN, the corresponding PV forecasts are available ~1 hour later once SS have trained and run the PV_Forecast model)
+
+All of the operational and historical forecasts are accessible via a [fully documented web API](https://api.solar.sheffield.ac.uk/pvforecast/), for which this repository provides a Python interface. There is a separate API and Python package for accessing PV_Live modelled outturn estimates: [github.com/SheffieldSolar/PV_Live-API](https://github.com/SheffieldSolar/PV_Live-API).
+
+Subscribing to the higher spatial resolution forecasts will also give access to the lower resolution ones i.e. subscribing to the PES-level forecasts also gives access to the national forecasts while subscribing to the GSP-level forecasts would give access to all three.
+
+
+The Terms & Conditions for the service are available [here](https://api.solar.sheffield.ac.uk/pvforecast/tandc).
 
 ## How do I get set up?
 
